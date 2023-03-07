@@ -4,6 +4,7 @@ import Searchbar from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Box } from './App.styled';
 
 class App extends Component {
   state = {
@@ -54,7 +55,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <Box>
         <Searchbar onSubmit={this.handleFormSubmit} />
         {this.state.error && <h2>error</h2>}
         {this.state.loading && <div>loading...</div>}
@@ -63,7 +64,7 @@ class App extends Component {
         )}
 
         <ToastContainer />
-      </div>
+      </Box>
     );
   }
 }

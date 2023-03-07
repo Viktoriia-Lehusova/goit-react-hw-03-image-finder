@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 // import PropTypes from 'prop-types';
+import { StyledList } from './ImageGallery.styled';
 
 export const ImageGallery = ({ imageGallery, onOpenModal }) => {
   return (
-    <ul className="gallery">
+    <StyledList className="gallery">
       {imageGallery.map(({ id, webformatURL, tags, largeImageURL }) => (
         <ImageGalleryItem
           key={id}
@@ -13,7 +14,7 @@ export const ImageGallery = ({ imageGallery, onOpenModal }) => {
           //   openModal={() => onOpenModal(largeImageURL, tags)}
         />
       ))}
-    </ul>
+    </StyledList>
   );
 };
 
