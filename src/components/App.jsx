@@ -94,13 +94,13 @@ class App extends Component {
           <Modal url={largeImage} alt={tag} onClose={closeModal} />
         )}
 
+        {loading && <Container> {Loader()} </Container>}
+
         {isVisible && <ButtonLoader loadMore={loadMore} />}
 
         {error && <h2>Something went wrong. Try again.</h2>}
 
         {isEmpty && <h1> Sorry. There are no images ... </h1>}
-
-        {loading && <Container> {Loader()} </Container>}
 
         <ToastContainer />
       </Box>

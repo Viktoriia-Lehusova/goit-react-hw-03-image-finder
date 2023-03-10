@@ -1,15 +1,15 @@
-import { Circles } from 'react-loader-spinner';
+import { ColorRing } from 'react-loader-spinner';
 
 export function Loader() {
   return (
-    <Circles
-      height="80"
-      width="80"
-      color="#4fa94d"
-      ariaLabel="circles-loading"
-      wrapperStyle={{}}
-      wrapperClass=""
+    <ColorRing
       visible={true}
+      height="50"
+      width="50"
+      ariaLabel="blocks-loading"
+      wrapperStyle={{}}
+      wrapperClass="blocks-wrapper"
+      colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
     />
   );
 }
