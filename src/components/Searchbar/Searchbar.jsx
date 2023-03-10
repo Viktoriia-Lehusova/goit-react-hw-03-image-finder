@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BiSearchAlt2 } from 'react-icons/bi';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import {
   StyledHeader,
@@ -54,5 +55,9 @@ class Searchbar extends Component {
     );
   }
 }
+
+StyledForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default Searchbar;
