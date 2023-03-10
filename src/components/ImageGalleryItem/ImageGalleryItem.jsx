@@ -4,7 +4,7 @@ import { StyledItem, StyledImage } from './ImageGalleryItem.styled';
 
 export const ImageGalleryItem = ({ src, alt, openModal }) => {
   return (
-    <StyledItem className="gallery-item">
+    <StyledItem onClick={openModal} className="gallery-item">
       <StyledImage src={src} alt={alt} />
     </StyledItem>
   );

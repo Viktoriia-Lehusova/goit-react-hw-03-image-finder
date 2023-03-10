@@ -22,7 +22,7 @@ class Searchbar extends Component {
     evt.preventDefault();
 
     if (this.state.imageValue.trim() === '') {
-      toast.error('no image');
+      toast.error('Something went wrong.');
       return;
     }
 

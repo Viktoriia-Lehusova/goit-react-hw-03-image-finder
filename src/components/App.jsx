@@ -1,10 +1,13 @@
 import { React, Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
-// import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
+import { fetchGallery } from './fetch/fetch';
 import { ImageGallery } from './ImageGallery/ImageGallery';
+import { ButtonLoader } from './Button/Button';
+import { Loader } from './Loader/Loader';
+import Modal from './Modal/Modal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Box } from './App.styled';
+import { Box, Container } from './App.styled';
 
 class App extends Component {
   state = {
@@ -13,55 +16,91 @@ class App extends Component {
     loading: false,
     page: 1,
     error: null,
-  };
-
-  handleFormSubmit = imageValue => {
-    this.setState({ imageValue });
+    isVisible: false,
+    isEmpty: false,
+    largeImage: null,
+    tag: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.imageValue !== this.state.imageValue) {
-      this.setState({ loading: true });
-      fetch(
-        `https://pixabay.com/api/?q=${this.state.imageValue}&page=${this.state.page}&key=32843972-0ea5b72fd9aa7da412e1885f6&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(resp => resp.json())
-        .then(image => this.setState({ imageGallery: [...image.hits] }))
-        .catch(error => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
+    if (
+      prevState.imageValue !== this.state.imageValue ||
+      prevState.page !== this.state.page
+    ) {
+      this.imgGalleryList(this.state.imageValue, this.state.page);
     }
   }
+  imgGalleryList = async (imageValue, page) => {
+    this.setState({ loading: true });
+    try {
+      const { hits, totalHits } = await fetchGallery(imageValue, page);
 
-  // imgGalleryList = async (searchQuery, page) => {
-  //   this.setState({ isLoader: true });
-  //   try {
-  //     const { hits, total } = await fetch(
-  //       `https://pixabay.com/api/?q=${this.props.imageValue}&page=1&key=32843972-0ea5b72fd9aa7da412e1885f6&image_type=photo&orientation=horizontal&per_page=12`
-  //     );
+      if (hits.length === 0) {
+        this.setState({ isEmpty: true });
+      }
+      this.setState(prev => ({
+        imageGallery: [...prev.imageGallery, ...hits],
+        isVisible: page < Math.ceil(totalHits / 12),
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
+  handleFormSubmit = imageValue => {
+    this.setState({
+      imageValue,
+      imageGallery: [],
+      loading: false,
+      page: 1,
+      error: null,
+      isVisible: false,
+      isEmpty: false,
+    });
+  };
+  loadMore = () => {
+    this.setState(prev => ({ page: prev.page + 1 }));
+  };
 
-  //     if (hits.length === 0) {
-  //       this.setState({ isEmpty: true });
-  //     }
-  //     this.setState(prev => ({
-  //       imageGallery: [...prev.imageGallery, ...hits],
-  //       isVisible: page < Math.ceil(total / hits.length),
-  //     }));
-  //   } catch (error) {
-  //     this.setState({ error: error.message });
-  //   } finally {
-  //     this.setState({ isLoader: false });
-  //   }
-  // };
+  closeModal = () => {
+    this.setState({ largeImage: null, tag: null });
+  };
+  openModal = (url, alt) => this.setState({ largeImage: url, tag: alt });
 
   render() {
+    const {
+      imageGallery,
+      isVisible,
+      imageValue,
+      loading,
+      isEmpty,
+      error,
+      largeImage,
+      tag,
+    } = this.state;
+
+    const { handleFormSubmit, loadMore, openModal, closeModal } = this;
+
     return (
       <Box>
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        {this.state.error && <h2>error</h2>}
-        {this.state.loading && <div>loading...</div>}
-        {this.state.imageGallery && (
-          <ImageGallery imageGallery={this.state.imageGallery} />
+        <Searchbar onSubmit={handleFormSubmit} />
+
+        {imageValue && (
+          <ImageGallery imageGallery={imageGallery} onOpenModal={openModal} />
         )}
+
+        {largeImage && (
+          <Modal url={largeImage} alt={tag} onClose={closeModal} />
+        )}
+
+        {isVisible && <ButtonLoader loadMore={loadMore} />}
+
+        {error && <h2>Something went wrong. Try again.</h2>}
+
+        {isEmpty && <h1> Sorry. There are no images ... </h1>}
+
+        {loading && <Container> {Loader()} </Container>}
 
         <ToastContainer />
       </Box>
