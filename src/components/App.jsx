@@ -1,6 +1,6 @@
 import { React, Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
-import { fetchGallery } from './fetch/fetch';
+import { fetchGallery } from '../fetch/fetch';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { ButtonLoader } from './Button/Button';
 import { Loader } from './Loader/Loader';
@@ -23,12 +23,13 @@ class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
+    if (prevState.imageValue !== this.state.imageValue) this.resetState();
+
     if (
       prevState.imageValue !== this.state.imageValue ||
       prevState.page !== this.state.page
-    ) {
+    )
       this.imgGalleryList(this.state.imageValue, this.state.page);
-    }
   }
   imgGalleryList = async (imageValue, page) => {
     this.setState({ loading: true });
@@ -48,16 +49,19 @@ class App extends Component {
       this.setState({ loading: false });
     }
   };
-  handleFormSubmit = imageValue => {
+  resetState = () => {
     this.setState({
-      imageValue,
       imageGallery: [],
-      loading: false,
       page: 1,
+      loading: false,
       error: null,
       isVisible: false,
       isEmpty: false,
     });
+  };
+  handleFormSubmit = inputValue => {
+    const { imageValue } = this.state;
+    if (imageValue !== inputValue) this.setState({ imageValue: inputValue });
   };
   loadMore = () => {
     this.setState(prev => ({ page: prev.page + 1 }));
